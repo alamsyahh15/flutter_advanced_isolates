@@ -1,14 +1,15 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:isolate';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'dart:async';
-import 'dart:isolate';
-import 'dart:convert';
-
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -16,14 +17,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(),
+      home: const MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -59,7 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
       String url = data;
 
-      http.Response response = await http.get(url);
+      http.Response response = await http.get(Uri.parse(url));
 
       replyPort.send(json.decode(response.body));
     }
@@ -73,15 +76,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget loadData() {
-    if (list.length == 0) {
-      return Center(child: CircularProgressIndicator());
+    if (list.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
     } else {
       return ListView.builder(
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) {
-          return Container(
-            padding: EdgeInsets.all(5.0),
-            child: Text('Item: ${list[index]["body"]}'),
+          return ListTile(
+            title: Text('Item: ${list[index]["body"]}'),
           );
         },
       );
@@ -92,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Advanced Isolate Example'),
+        title: const Text('Advanced Isolate Example'),
       ),
       body: loadData(),
     );
